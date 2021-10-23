@@ -70,15 +70,12 @@ def listen():
     r = sr.Recognizer()
     mic = sr.Microphone(device_index=9)
     print("Be ready to speak")
-    # with mic as source:
-    #     r.adjust_for_ambient_noise(source)
-    #     print("START SPEAKING NOW")
-    #     audio = r.listen(source)
-    #
-    # str = r.recognize_google(audio)
-    # return str
+    with mic as source:
+        r.adjust_for_ambient_noise(source)
+        print("START SPEAKING NOW")
+        audio = r.listen(source)
 
-    str = input()
+    str = r.recognize_google(audio)
     return str
 
 while True:
