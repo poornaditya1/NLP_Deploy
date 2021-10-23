@@ -7,21 +7,20 @@ intro = '''Hello, I am Maya 2.0 created at the Department of Automation and Robo
 
 department_intro = '''I was created in the Department of Automation and Robotics Engineering in KLE Technological University. Mr. Arun Giriyapur is the head of the department. BE Automation & Robotics program prepares students for designing, interface, installation, and troubleshooting of industrial robots and automation systems. The main emphasis is on cognitive intelligence, electronics, electrical controls, robotics and mechanical systems. Students integrate electronics and electrical controls with mechanical systems and programmable controllers and explore alternative trade-offs in the process of problem-solving.'''
 
-def introduction(self):
-    print("samajh aa gaya")
-    tts = gTTS(intro, lang='en', tld='co.in',slow=False)
+def speak(text):
+    tts = gTTS(text,lang = 'en',tld='co.in',slow=False)
     tts.save('answer.mp3')
     sound_file = 'answer.mp3'
     playsound(sound_file)
     print("Maya has spoken")
 
-def department_introduction(self):
+def introduction():
     print("samajh aa gaya")
-    tts = gTTS(department_intro, lang='en', tld='co.in',slow=False)
-    tts.save('answer.mp3')
-    sound_file = 'answer.mp3'
-    playsound(sound_file)
-    print("Maya has spoken")
+    speak(intro)
+
+def department_introduction():
+    print("samajh aa gaya")
+    speak(department_intro)
 
 while True:
     r = sr.Recognizer()
@@ -39,3 +38,5 @@ while True:
             department_introduction()
         else:
             introduction()
+    if "exit" in str:
+        break
