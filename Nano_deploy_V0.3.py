@@ -36,38 +36,6 @@ intro = '''Hello, I am Maya 1.0 created at the Department of Automation and Robo
 department_intro = '''I was created in the Department of Automation and Robotics Engineering in. KLE Technological University. Mr. Arun Giriyapur is the head of the department. The department prepares students to work efficiently with industrial robots and automation systems. The main areas of focus are cognitive intelligence, electronics, robotics and mechanical systems. Students integrate electronics with mechanical systems and programmable controllers and explore alternative trade-offs in the process of problem-solving.'''
 
 
-context = '''Executive council is led by Professor Ashok S. Shettar, the Vice-Chancellor.
-Professor Ashok S. Shettar is the Vice-Chancellor.
-Doctor P. G. Tewari is the academic dean.
-Professor Uma K. Mudenagudi is the Research and Development dean.
-C.A. Pooja R. Kandoi is the Finance officer.
-Doctor Sanjay Kotabagi is the Student Welfare dean and Head of Humanities department.
-Professor B. L. Desai is the Executive Dean.
-Doctor B. B. Kotturshettar is the Dean Planning & Development.
-Professor T. V. M. Swamy is the First Year Coordinator.
-Professor C. D. Kerure is the Placement Officer
-Doctor Vijayalakshmi M. is the Director of CEER.
-Doctor Nitin Kulkarni is the Director of CTIE.
-
-Heads of the departments :
-Professor Arun C. Giriyapur is the Head of Automation and Robotics Engineering Department
-Doctor Vinaya Hiremath is the Head of School of Architecture
-Doctor B. S. Hunagund is the Head of Biotechnology Department
-Doctor M. V. Chitawadagi is the Head of School of Civil Engineering
-Doctor Meena S. Marallappanavar is the Head of School of Computer Science & Engineering
-Doctor A. B. Raju is the Head of Electrical and Electronics Department
-Doctor Nalini Iyer is the Head of School of Electronics & Communication Engineering
-Professor P. R. Patil is the Head of MCA department
-Professor Jagdish Bapat is the Director of School of Management Studies and Research
-Doctor B. B. Kotturshettar is the Head of School of Mechanical Engineering
-Professor S V Hiremath is the head of School of Advanced sciences
-Professor G B Marali is the Head of Mathematics department
-'''
-
-
-
-
-
 use_own_model = False
 
 model_name_or_path = "twmkn9/albert-base-v2-squad2"#"ktrapeznikov/albert-xlarge-v2-squad-v2"
@@ -176,7 +144,10 @@ def run_prediction(question_texts, context_text):
     return predictions
 
 def ask():
-    global context
+    f = open("context.txt", "rt")
+    context = f.read()
+    f.close()
+    w = open("context.txt", "at")
 
     # print("What question do you want me to answer")
     ques = listen(3)
@@ -189,12 +160,13 @@ def ask():
         ch = listen()
         if ch=="yes":
             learn = listen(4)
-            context = context + " " + learn
+            learn = learn+"."
+            w.write(learn)
             speak("Thank you for teaching me that")
         print("Sorry, I don't know the answer to that question")
     else:
-        #speak(prediction["0"])
         print(prediction["0"])
+        speak(prediction["0"])
 
 
 def speak(text):

@@ -59,6 +59,7 @@ def department_introduction():
 
 def ask_wiki(ques):
     print("Searching...")
+    speak("Hand on a minute")
     page_data = wikipedia.page(ques)
     answer = page_data.content
     if answer is None:
