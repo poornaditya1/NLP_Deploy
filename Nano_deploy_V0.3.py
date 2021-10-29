@@ -29,17 +29,17 @@ from transformers.data.metrics.squad_metrics import compute_predictions_logits
 
 import re
 alphabets= "([A-Za-z])"
-prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
+prefixes = "(Mr|St|Mrs|Ms|Dr|Prof)[.]"
 suffixes = "(Inc|Ltd|Jr|Sr|Co)"
-starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
+starters = "(Mr|Mrs|Ms|Dr|Prof|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
 acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
 websites = "[.](com|net|org|io|gov)"
 
 
 
-intro = '''Hello, I am Maya 1.0 created at the Department of Automation and Robotics in KLE Technological University. I am built to mimic human actions, interact with humans and to act as a medicine dispenser in hospitals.'''
+intro = '''Hello, I am Maya 1.0 created at the Department of Automation and Robotics in KLE Technological University. I am built to mimic human actions and interact with humans. I can move, navigate and verbally interact with people around me'''
 
-department_intro = '''I was created in the Department of Automation and Robotics Engineering in. KLE Technological University. Mr. Arun Giriyapur is the head of the department. The department prepares students to work efficiently with industrial robots and automation systems. The main areas of focus are cognitive intelligence, electronics, robotics and mechanical systems. Students integrate electronics with mechanical systems and programmable controllers and explore alternative trade-offs in the process of problem-solving.'''
+department_intro = '''I was created in the Department of Automation and Robotics Engineering in. KLE Technological University. The department prepares students to work efficiently with industrial robots and automation systems. The main areas of focus are cognitive intelligence, electronics, robotics and mechanical systems. Students integrate electronics with mechanical systems and programmable controllers and explore alternative trade-offs in the process of problem-solving. The students work on a variety of projects and create marvels of engineering like me'''
 
 name = ''
 
@@ -178,13 +178,13 @@ def ask():
 
 
 def speak(text):
-    #tts = gTTS(text,lang = 'en',tld='co.in',slow=False)
-    #tts.save('answer.mp3')
-    #sound_file = 'answer.mp3'
-    #playsound(sound_file)
-    #print("Maya has spoken")
-    #os.remove('answer.mp3')
-    print(text)
+    tts = gTTS(text,lang = 'en',tld='co.in',slow=False)
+    tts.save('answer.mp3')
+    sound_file = 'answer.mp3'
+    playsound(sound_file)
+    print("Maya has spoken")
+    os.remove('answer.mp3')
+    #print(text)
 
 def split_into_sentences(text):
     text = " " + text + "  "
@@ -273,7 +273,6 @@ def listen(a=None):
             speak("Do you want to know more")
         elif a is 3:
             speak("What question do you want me to answer")
-            time.sleep(2)
         elif a is 4:
             speak("Please tell me the answer")
         elif a is 5:
@@ -286,11 +285,15 @@ def listen(a=None):
             pass
 
         print("START SPEAKING NOW")
-        #audio = r.listen(source)
+        audio = r.listen(source)
 
-    #str = r.recognize_google(audio)
-    string = input()
-    return string
+    try:
+        string = r.recognize_google(audio)
+    #string = input()
+        return string
+    except:
+        speak("I'm sorry, I didn't get you. Please say it again")
+        return listen()
 
 def greet(name):
     cur_time = time.localtime(time.time())
@@ -302,80 +305,84 @@ def greet(name):
         greeting = "Good evening "
     return greeting+name
 
-speak("Maya is online and ready to comply")
-name = listen(6)
-speak(greet(name))
-while True:
+
+if __name__=='__main__':
+
+    speak("Maya is online and ready to comply")
+    name = listen(6)
+    speak(greet(name))
+    while True:
 
     # print("What do you want me to do")
-    command = listen(0)
+        command = listen(0)
     # str = input()
-    str_q = command.split()
-    if "how are you" in command:
-        speak("I'm doing great")
-    elif "name" in str_q:
-        speak("My name is Maya")    
-    elif "introduce" in str_q or "introduction" in str_q:
-        if "department" in str_q:
-            department_introduction()
-        else:
-            introduction()
-    elif "joke" in str_q:
-        jk = pyjokes.get_joke("en")
-        speak(jk)
+        str_q = command.split()
+        if "how are you" in command:
+            speak("I'm doing great")
+        elif "name" in str_q:
+            speak("My name is Maya")    
+        elif "introduce" in str_q or "introduction" in str_q:
+            if "department" in str_q:
+                department_introduction()
+            else:
+                introduction()
+        elif "joke" in str_q:
+            jk = pyjokes.get_joke("en")
+            speak(jk)
+            print(jk)
 
-    elif 'news' in str_q:
-        n_topic = listen(7)
-        client = gnewsclient.NewsClient(language = 'english', location = 'india', topic = n_topic, max_results = 3)
-        news = client.get_news()
-        speak("The headlines are as follows")
-        for item in news:
-            speak(item['title'])
-    elif "weather" in str_q:
-        api_k = "4e68859684a3c41718d5aaa517641d1f"
-        base_url = "http://api.openweathermap.org/data/2.5/weather?"
-        city = "Hubli"
-        complete_url = base_url + "appid=" + api_k + "&q=" + city
-        response = requests.get(complete_url)
-        x = response.json()
-        if x["cod"] != "404":
-            y = x["main"]
-            current_temperature = y["temp"]
-            current_pressure = y["pressure"]
-            current_humidiy = y["humidity"]
-            z = x["weather"]
-            weather_description = z[0]["description"]
-            speak(" Temperature (in kelvin unit) = " +str(current_temperature)+"\n atmospheric pressure (in hPa unit) ="+str(current_pressure) +"\n humidity (in percentage) = " +str(current_humidiy) +"\n description = " +str(weather_description))
+        elif 'news' in str_q:
+            n_topic = listen(7)
+            client = gnewsclient.NewsClient(language = 'english', location = 'india', topic = n_topic, max_results = 3)
+            news = client.get_news()
+            speak("The headlines are as follows")
+            for item in news:
+                speak(item['title'])
+        elif "weather" in str_q:
+            api_k = "4e68859684a3c41718d5aaa517641d1f"
+            base_url = "http://api.openweathermap.org/data/2.5/weather?"
+            city = "Hubli"
+            complete_url = base_url + "appid=" + api_k + "&q=" + city
+            response = requests.get(complete_url)
+            x = response.json()
+            if x["cod"] != "404":
+                y = x["main"]
+                current_temperature = y["temp"]
+                current_pressure = y["pressure"]
+                current_humidiy = y["humidity"]
+                z = x["weather"]
+                weather_description = z[0]["description"]
+                speak(" Temperature (in kelvin unit) = " +str(current_temperature)+"\n atmospheric pressure (in hPa unit) ="+str(current_pressure) +"\n humidity (in percentage) = " +str(current_humidiy) +"\n description = " +str(weather_description))
 
-    elif "about" in str_q:
-        #speak('What would you like to know about')
-        #topic = listen()
-        # sen = ask_wiki(topic)
-        sen = ask_wiki(str_q)
-        if sen == -1:
-            speak("Sorry, I don't know the answer")
-        else:
-            a = 0
-            b = 2
-            flag = True
-            while flag:
-                s = ""
-                s = s.join(sen[a:b])
-                speak(s)
+        elif "about" in str_q:
+            #speak('What would you like to know about')
+            #topic = listen()
+            # sen = ask_wiki(topic)
+            sen = ask_wiki(str_q)
+            if sen == -1:
+                speak("Sorry, I don't know the answer")
+            else:
+                a = 0
+                b = 2
+                flag = True
+                while flag:
+                    s = ""
+                    s = s.join(sen[a:b])
+                    speak(s)
 
-                choice = listen(1)
-                if choice == "yes":
-                    a = b
-                    b+=5
-                else:
-                    flag = False
-    elif "ask" in str_q or "answer" in str_q:
-        ask()
-    elif "exit" in str_q or "bye" in str_q:
-        cont = "thank you "+name
-        if time.localtime(time.time()).tm_hour < 20:
-            speak(cont+". Have a great day")
-        else:
-            speak(cont+". Good night")
-        name =''
-        break
+                    choice = listen(1)
+                    if choice == "yes":
+                        a = b
+                        b+=5
+                    else:
+                        flag = False
+        elif "ask" in str_q or "answer" in str_q:
+            ask()
+        elif "exit" in str_q or "bye" in str_q:
+            cont = "thank you "+name
+            if time.localtime(time.time()).tm_hour < 20:
+                speak(cont+". Have a great day")
+            else:
+                speak(cont+". Good night")
+            name =''
+            break
